@@ -3,7 +3,8 @@
     "target": "es2017",
     "module": "commonjs",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@components/*": ["./src/components/*"],
     }
   },
   "exclude": ["node_modules", "dist"]
