@@ -9,48 +9,48 @@
 </template>
 
 <script setup>
-import Header from './components/Header.vue'
-import Balance from './components/Balance.vue'
-import IncomeExpenses from './components/IncomeExpenses.vue'
-import TransactionList from './components/TransactionList.vue'
-import AddTransaction from './components/AddTransaction.vue'
+import Header from '@components/Header.vue'
+import Balance from '@components/Balance.vue'
+import IncomeExpenses from '@components/IncomeExpenses.vue'
+import TransactionList from '@components/TransactionList.vue'
+import AddTransaction from '@components/AddTransaction.vue'
 
-import { ref, computed, onMounted } from 'vue'
+import { reactive, computed, onMounted } from 'vue'
 
-const transactions = ref([])
+const transactions = reactive([])
 
 onMounted(()=>{
   const savedTransactions = JSON.parse(localStorage.getItem('transactions'))
   if(savedTransactions){
-    transactions.value = savedTransactions
+    transactions.push(...savedTransactions)
   }
 })
 
 const total = computed(()=>{
-  return transactions.value.reduce((acc, item) => (acc += item.amount), 0).toFixed(2)
+  return transactions.reduce((acc, item) => (acc += item.amount), 0).toFixed(2)
 })
 
 const income = computed(() => {
-  return transactions.value
+  return transactions
     .filter(transaction => transaction.amount > 0)
     .reduce((acc, transaction) => (acc += transaction.amount), 0)
     .toFixed(2)
 })
 
 const expense = computed(() => {
-  return transactions.value
+  return transactions
     .filter(transaction => transaction.amount < 0)
     .reduce((acc, transaction) => (acc += transaction.amount), 0)
     .toFixed(2)
 })
 
 const handleTransactionSubmitted = (transaction) => {
-  transactions.value.push({
-    id: generateId,
+  transactions.push({
+    id: generateId(),
     text: transaction.text,
     amount: +transaction.amount
   })
-  localStorage.setItem('transactions', JSON.stringify(transactions.value))
+  localStorage.setItem('transactions', JSON.stringify(transactions))
 }
 
 const generateId = () => {
@@ -58,8 +58,9 @@ const generateId = () => {
 }
 
 const handleTransactionDeleted = (id) => {
-  transactions.value = transactions.value.filter(transaction => transaction.id !== id)
-  localStorage.setItem('transactions', JSON.stringify(transactions.value))
+  const removeTransaction = transactions.findIndex(transaction => transaction.id === id)
+  transactions.splice(removeTransaction, 1)
+  localStorage.setItem('transactions', JSON.stringify(transactions))
 }
 
 </script>

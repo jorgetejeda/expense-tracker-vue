@@ -17,29 +17,29 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { reactive } from 'vue'
 import { useToast } from 'vue-toastification'
 
 const toast = useToast()
 const emit = defineEmits(['onTransactionSubmitted'])
 
-const formData = ref({
+const formData = reactive({
     text: '',
     amount: 0
 })
 
 const resetForm = () => {
-    formData.value.text = ''
-    formData.value.amount = 0
+    formData.text = ''
+    formData.amount = 0
 }
 
 const onSubmit = () => {
-    if(!formData.value.text || !formData.value.amount){
+    if(!formData.text || !formData.amount){
         toast.error('Please add a text and amount')
         return
     }
 
-    emit('onTransactionSubmitted', formData.value)
+    emit('onTransactionSubmitted', formData)
     resetForm()
 }
 </script>
